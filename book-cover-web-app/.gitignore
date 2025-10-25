@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# Flask
+instance/
+.webassets-cache
+
+# Uploads (don't commit user uploads)
+uploads/*.jpeg
+uploads/*.jpg
+uploads/*.png
+
+# Keep the uploads directory structure
+!uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models (EasyOCR downloads these)
+.EasyOCR/
+
+# PyTorch cache
+.cache/

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology - Book Cover Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #4a5568;
+            font-size: 1.4em;
+            margin: 30px 0 15px;
+        }
+
+        p, li {
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stage {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+        }
+
+        .stage-title {
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stage-tech {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .concept {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .concept-title {
+            color: #234e52;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        code {
+            background: #f7fafc;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d53f8c;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .comparison-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .limitation {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .limitation-title {
+            color: #742a2a;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 How It Works</h1>
+            <p>Understanding the ML pipeline</p>
+        </header>
+
+        <div class="card">
+            <h2>Overview</h2>
+            <p>
+                The Book Cover Analyzer uses a <strong>three-stage ML pipeline</strong> that combines
+                classical computer vision with modern deep learning. Each stage specializes in a specific task.
+            </p>
+
+            <div class="concept">
+                <div class="concept-title">ML Concept: Multi-Model Pipeline</div>
+                <p>
+                    Real-world ML systems don't rely on a single model. Instead, they combine multiple
+                    specialized models, each optimized for a specific task. This analyzer uses:
+                </p>
+                <ul>
+                    <li><strong>OpenCV</strong> - Classical computer vision (no ML)</li>
+                    <li><strong>EasyOCR</strong> - Deep learning for text detection and recognition</li>
+                    <li><strong>PyTorch ResNet18</strong> - Deep learning for image classification</li>
+                </ul>
+            </div>
+
+            <h2>The Three-Stage Pipeline</h2>
+
+            <div class="pipeline">
+                <div class="stage">
+                    <div class="stage-tech">OpenCV - Classical Computer Vision</div>
+                    <div class="stage-title">Stage 1: Book Boundary Detection</div>
+                    <p><strong>What it does:</strong> Finds and extracts the book cover from the uploaded image.</p>
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>Convert image to grayscale</li>
+                        <li>Apply Gaussian blur to reduce noise</li>
+                        <li>Detect edges using Canny edge detection</li>
+                        <li>Find contours (shape boundaries)</li>
+                        <li>Select largest rectangular contour as book boundary</li>
+                        <li>Apply perspective transform to get straight-on view</li>
+                    </ul>
+                    <p><strong>ML Concept:</strong> This stage uses <em>hand-crafted features</em> - algorithms designed
+                    by humans based on image processing theory. No neural networks, no training data needed!</p>
+                </div>
+
+                <div class="stage">
+                    <div class="stage-tech">EasyOCR - Deep Learning</div>
+                    <div class="stage-title">Stage 2: Text Detection and Recognition</div>
+                    <p><strong>What it does:</strong> Finds all text on the book cover and reads what it says.</p>
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>Uses <strong>CRAFT neural network</strong> to detect WHERE text is located</li>
+                        <li>Uses <strong>Recognition network</strong> to read WHAT the text says</li>
+                        <li>Returns bounding boxes, text content, and confidence scores</li>
+                    </ul>
+                    <p><strong>ML Concept:</strong> This is <em>end-to-end deep learning</em>. Two neural networks
+                    work together - one finds text regions, the other reads them. Both are pre-trained on millions
+                    of images, so they work out of the box!</p>
+                </div>
+
+                <div class="stage">
+                    <div class="stage-tech">PyTorch ResNet18 - Deep Learning</div>
+                    <div class="stage-title">Stage 3: Image Classification</div>
+                    <p><strong>What it does:</strong> Identifies non-text regions and classifies what type of image they contain.</p>
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>Create a mask of all text regions from Stage 2</li>
+                        <li>Sample image regions with low text coverage (center region)</li>
+                        <li>Preprocess images (resize to 224×224, normalize)</li>
+                        <li>Run through ResNet18 neural network</li>
+                        <li>Get top predictions with confidence scores</li>
+                    </ul>
+                    <p><strong>ML Concept:</strong> This uses <em>transfer learning</em>. ResNet18 was trained on
+                    ImageNet (1.2 million images, 1000 categories). We use it directly without any training - this
+                    is called <em>zero-shot inference</em>.</p>
+                </div>
+            </div>
+
+            <h2>Key ML Concepts</h2>
+
+            <h3>Transfer Learning</h3>
+            <div class="concept">
+                <p>
+                    <strong>The Problem:</strong> Training a neural network from scratch requires millions of images
+                    and days of GPU compute.
+                </p>
+                <p>
+                    <strong>The Solution:</strong> Use a model pre-trained on a massive dataset (ImageNet). The model
+                    already learned to recognize edges, textures, shapes, and objects - knowledge that transfers to
+                    book covers!
+                </p>
+                <p>
+                    <strong>In this app:</strong> ResNet18 was trained on ImageNet. We use it directly (zero-shot)
+                    without any fine-tuning on book covers. For production, we would fine-tune it on a book cover
+                    dataset for better accuracy.
+                </p>
+            </div>
+
+            <h3>Classical CV vs Deep Learning</h3>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <h4>Classical CV (OpenCV)</h4>
+                    <ul>
+                        <li>Hand-crafted features</li>
+                        <li>Explicit rules (if/else logic)</li>
+                        <li>Fast to develop</li>
+                        <li>Works with no training data</li>
+                        <li>Interpretable - you know why it works</li>
+                    </ul>
+                </div>
+                <div class="comparison-item">
+                    <h4>Deep Learning (PyTorch)</h4>
+                    <ul>
+                        <li>Learned features</li>
+                        <li>Implicit patterns (black box)</li>
+                        <li>Slow to train</li>
+                        <li>Needs lots of labeled data</li>
+                        <li>More accurate on complex tasks</li>
+                    </ul>
+                </div>
+            </div>
+            <p>
+                <strong>Best approach:</strong> Combine both! Use classical CV for well-defined tasks (find edges,
+                detect shapes), use deep learning for perception tasks (read text, classify images).
+            </p>
+
+            <h3>Inference vs Training</h3>
+            <div class="concept">
+                <p>
+                    <strong>This app does INFERENCE, not TRAINING:</strong>
+                </p>
+                <p>
+                    <strong>Inference (what we do):</strong> Load pre-trained model, run input through it, get predictions.
+                    Fast (milliseconds), no GPUs needed.
+                </p>
+                <p>
+                    <strong>Training (not done):</strong> Start with random weights, show model millions of examples,
+                    compute loss, update weights. Slow (hours/days), requires GPUs.
+                </p>
+                <p>
+                    99% of ML applications use pre-trained models. Training from scratch is rare and expensive!
+                </p>
+            </div>
+
+            <h2>Current Limitations</h2>
+
+            <div class="limitation">
+                <div class="limitation-title">Zero-Shot Classification</div>
+                <p>
+                    ResNet18 was trained on ImageNet (everyday objects like dogs, cars, fruits), not book covers.
+                    Classifications like "element_78" are generic ImageNet classes, not book-specific categories.
+                </p>
+                <p>
+                    <strong>To improve:</strong> Fine-tune ResNet18 on a book cover dataset with labels like
+                    "author name", "title", "logo", "barcode", "illustration", etc.
+                </p>
+            </div>
+
+            <div class="limitation">
+                <div class="limitation-title">Simple Region Sampling</div>
+                <p>
+                    Currently we only sample the center region for image classification. This misses logos, illustrations,
+                    or other visual elements in corners or edges.
+                </p>
+                <p>
+                    <strong>To improve:</strong> Use object detection (YOLO, Faster R-CNN) to find AND classify all
+                    visual elements in one pass.
+                </p>
+            </div>
+
+            <h2>Future Enhancements</h2>
+
+            <h3>1. Fine-Tuning</h3>
+            <p>
+                Collect a dataset of book covers with labels, then fine-tune ResNet18 to recognize book-specific
+                elements (titles, authors, publishers, barcodes, etc.).
+            </p>
+
+            <h3>2. Object Detection</h3>
+            <p>
+                Replace Stages 2 and 3 with a single YOLO model that detects and classifies all regions
+                (text + images) in one forward pass.
+            </p>
+
+            <h3>3. Layout Analysis</h3>
+            <p>
+                Add spatial reasoning to understand book cover layout: where is the title (usually top/center),
+                author (below title), publisher logo (bottom), etc.
+            </p>
+
+            <h2>Technical Stack</h2>
+            <ul>
+                <li><strong>Backend:</strong> Python, Flask</li>
+                <li><strong>Classical CV:</strong> OpenCV 4.x, imutils</li>
+                <li><strong>Deep Learning:</strong> PyTorch 2.x, EasyOCR</li>
+                <li><strong>Models:</strong> CRAFT (text detection), ResNet18 (image classification)</li>
+                <li><strong>Frontend:</strong> HTML, CSS, JavaScript (vanilla)</li>
+            </ul>
+
+            <div class="back-link">
+                <a href="/" class="btn">← Back to Analyzer</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

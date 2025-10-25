@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Cover Analyzer - ML-Powered Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f7fafc;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .upload-area.drag-over {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            color: #718096;
+            font-size: 0.9em;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .results-title {
+            font-size: 1.8em;
+            color: #2d3748;
+        }
+
+        .results-meta {
+            display: flex;
+            gap: 20px;
+        }
+
+        .meta-item {
+            background: #edf2f7;
+            padding: 10px 20px;
+            border-radius: 6px;
+        }
+
+        .meta-label {
+            font-size: 0.8em;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.3em;
+            color: #2d3748;
+            font-weight: bold;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            color: #2d3748;
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: normal;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .confidence {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .confidence.high {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .confidence.medium {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .confidence.low {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .methodology-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .methodology-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .methodology-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Book Cover Analyzer</h1>
+            <p>ML-powered analysis using OpenCV, EasyOCR, and PyTorch</p>
+        </header>
+
+        <div class="card">
+            <!-- Upload Section -->
+            <div id="uploadSection">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Drag and drop your book cover here</div>
+                    <div class="upload-hint">or click to browse (PNG, JPG, JPEG - max 16MB)</div>
+                    <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" id="uploadBtn" disabled>Analyze Book Cover</button>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div class="loading" id="loadingSection">
+                <div class="spinner"></div>
+                <p style="color: #718096; font-size: 1.1em;">
+                    Running ML pipeline...<br>
+                    <span style="font-size: 0.9em; opacity: 0.8;">
+                        Stage 1: OpenCV edge detection<br>
+                        Stage 2: EasyOCR text recognition<br>
+                        Stage 3: PyTorch image classification
+                    </span>
+                </p>
+            </div>
+
+            <!-- Error Section -->
+            <div class="error" id="errorSection"></div>
+
+            <!-- Results Section -->
+            <div class="results" id="resultsSection">
+                <div class="results-header">
+                    <h2 class="results-title">Analysis Results</h2>
+                    <div class="results-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">Text Regions</div>
+                            <div class="meta-value" id="textCount">0</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Image Regions</div>
+                            <div class="meta-value" id="imageCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <img id="imagePreview" class="image-preview" alt="Uploaded book cover">
+
+                <!-- Text Regions Table -->
+                <h3 class="section-title">
+                    📝 Text Regions
+                    <span class="badge" id="textBadge">0 found</span>
+                </h3>
+                <table id="textTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Text Content</th>
+                            <th>Confidence</th>
+                            <th>Position (x, y)</th>
+                            <th>Size (w × h)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="textTableBody"></tbody>
+                </table>
+
+                <!-- Image Regions Table -->
+                <h3 class="section-title">
+                    🖼️ Image Regions
+                    <span class="badge" id="imageBadge">0 found</span>
+                </h3>
+                <table id="imageTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Location</th>
+                            <th>Classification</th>
+                            <th>Confidence</th>
+                            <th>Position (x, y)</th>
+                            <th>Size (w × h)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="imageTableBody"></tbody>
+                </table>
+
+                <!-- Interpretation Section -->
+                <h3 class="section-title">
+                    💡 What We Found
+                </h3>
+                <div style="background: #f7fafc; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
+                    <!-- Inferred Metadata -->
+                    <div style="margin-bottom: 25px; padding: 20px; background: white; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <h4 style="color: #667eea; margin-bottom: 15px; font-size: 1.2em;">📚 Inferred Book Information</h4>
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #4a5568;">Title:</strong>
+                            <span id="inferredTitle" style="color: #2d3748; margin-left: 10px;"></span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #4a5568;">Author(s):</strong>
+                            <span id="inferredAuthors" style="color: #2d3748; margin-left: 10px;"></span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <strong style="color: #4a5568;">Publisher:</strong>
+                            <span id="inferredPublisher" style="color: #2d3748; margin-left: 10px;"></span>
+                        </div>
+                        <div id="otherTextDiv" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                            <strong style="color: #4a5568;">Other Text (Reviews/Quotes):</strong>
+                            <ul id="otherTextList" style="margin-top: 8px; margin-left: 20px; color: #2d3748;"></ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">📖 All Text Detected:</h4>
+                        <p id="fullText" style="color: #2d3748; line-height: 1.8; font-size: 1.05em;"></p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">🖼️ Visual Elements:</h4>
+                        <p id="imageSummary" style="color: #2d3748; line-height: 1.8;"></p>
+                        <div id="imageDescriptions" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div>
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">📊 Cover Type:</h4>
+                        <p id="coverType" style="color: #2d3748; line-height: 1.8; font-weight: 500;"></p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn" onclick="window.location.reload()">Analyze Another Image</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="methodology-link">
+            <a href="/methodology">🔬 How does this work? Learn about the ML pipeline</a>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorSection = document.getElementById('errorSection');
+
+        let selectedFile = null;
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // File selected
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                uploadBtn.disabled = false;
+                uploadArea.querySelector('.upload-text').textContent = `Selected: ${selectedFile.name}`;
+            }
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+
+            if (e.dataTransfer.files.length > 0) {
+                selectedFile = e.dataTransfer.files[0];
+                fileInput.files = e.dataTransfer.files;
+                uploadBtn.disabled = false;
+                uploadArea.querySelector('.upload-text').textContent = `Selected: ${selectedFile.name}`;
+            }
+        });
+
+        // Upload and analyze
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            // Hide upload, show loading
+            uploadSection.style.display = 'none';
+            loadingSection.style.display = 'block';
+            errorSection.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+                // Display results
+                displayResults(data);
+
+            } catch (error) {
+                loadingSection.style.display = 'none';
+                errorSection.style.display = 'block';
+                errorSection.textContent = `Error: ${error.message}`;
+                uploadSection.style.display = 'block';
+            }
+        });
+
+        function displayResults(data) {
+            loadingSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+
+            // Image preview
+            document.getElementById('imagePreview').src = data.image_url;
+
+            // Summary counts
+            document.getElementById('textCount').textContent = data.summary.total_text_regions;
+            document.getElementById('imageCount').textContent = data.summary.total_image_regions;
+            document.getElementById('textBadge').textContent = `${data.summary.total_text_regions} found`;
+            document.getElementById('imageBadge').textContent = `${data.summary.total_image_regions} found`;
+
+            // Text regions table
+            const textTableBody = document.getElementById('textTableBody');
+            textTableBody.innerHTML = '';
+            data.text_regions.forEach(region => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${region.id}</td>
+                    <td><strong>${region.text}</strong></td>
+                    <td>${formatConfidence(region.confidence)}</td>
+                    <td>(${region.bbox.x}, ${region.bbox.y})</td>
+                    <td>${region.bbox.width} × ${region.bbox.height}</td>
+                `;
+                textTableBody.appendChild(row);
+            });
+
+            // Image regions table
+            const imageTableBody = document.getElementById('imageTableBody');
+            imageTableBody.innerHTML = '';
+            data.image_regions.forEach(region => {
+                const row = document.createElement('tr');
+                const location = (region.location || 'unknown').replace(/_/g, ' ');
+                row.innerHTML = `
+                    <td>${region.id}</td>
+                    <td style="text-transform: capitalize;"><strong>${location}</strong></td>
+                    <td>${region.pytorch_class}</td>
+                    <td>${formatConfidence(region.confidence)}</td>
+                    <td>(${region.bbox.x}, ${region.bbox.y})</td>
+                    <td>${region.bbox.width} × ${region.bbox.height}</td>
+                `;
+                imageTableBody.appendChild(row);
+            });
+
+            // Interpretation section
+            if (data.interpretation) {
+                const interp = data.interpretation;
+
+                // Inferred metadata
+                document.getElementById('inferredTitle').textContent = interp.inferred_title || "Unable to determine";
+                document.getElementById('inferredAuthors').textContent =
+                    (interp.inferred_authors && interp.inferred_authors.length > 0)
+                    ? interp.inferred_authors.join(', ')
+                    : "Unable to determine";
+                document.getElementById('inferredPublisher').textContent = interp.inferred_publisher || "Unable to determine";
+
+                // Other text (reviews/quotes)
+                if (interp.other_text && interp.other_text.length > 0) {
+                    document.getElementById('otherTextDiv').style.display = 'block';
+                    const otherList = document.getElementById('otherTextList');
+                    otherList.innerHTML = '';
+                    interp.other_text.forEach(text => {
+                        const li = document.createElement('li');
+                        li.textContent = text;
+                        otherList.appendChild(li);
+                    });
+                }
+
+                // Text content
+                document.getElementById('fullText').textContent = interp.full_text || "No text detected";
+
+                // Image summary
+                document.getElementById('imageSummary').textContent = interp.image_summary || "";
+
+                // Image descriptions
+                const imageDescDiv = document.getElementById('imageDescriptions');
+                imageDescDiv.innerHTML = '';
+                if (interp.images && interp.images.length > 0) {
+                    interp.images.forEach(img => {
+                        const descItem = document.createElement('div');
+                        descItem.style.cssText = 'background: white; padding: 12px; margin: 8px 0; border-radius: 6px; border-left: 4px solid #667eea;';
+                        descItem.innerHTML = `
+                            <strong style="color: #667eea;">${img.location}:</strong>
+                            <span style="color: #4a5568;">${img.description}</span>
+                        `;
+                        imageDescDiv.appendChild(descItem);
+                    });
+                }
+
+                // Cover type
+                document.getElementById('coverType').textContent = interp.cover_type || "";
+            }
+        }
+
+        function formatConfidence(value) {
+            const percent = (value * 100).toFixed(1);
+            let className = 'low';
+            if (value > 0.7) className = 'high';
+            else if (value > 0.4) className = 'medium';
+
+            return `<span class="confidence ${className}">${percent}%</span>`;
+        }
+    </script>
+</body>
+</html>
