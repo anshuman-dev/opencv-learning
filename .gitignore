@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+detected_regions/
+uploads/
+*.jpg
+*.jpeg
+*.png
+!data/images/book_cover.jpeg
+
+# Model weights
+*.pth
+*.pt
+*.onnx
+
+# Logs
+*.log
