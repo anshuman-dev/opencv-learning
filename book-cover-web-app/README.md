@@ -2,6 +2,15 @@
 
 A production-ready web application that analyzes book covers using a three-stage ML pipeline combining classical computer vision with modern deep learning.
 
+## 🚀 Live Demo
+
+**Try it now:** [Book Cover Analyzer on Hugging Face Spaces](https://huggingface.co/spaces/singhanshuman/book-cover-analyzer)
+
+Upload any book cover image and get instant AI-powered analysis:
+- 📚 Book title, author, and publisher extraction
+- 🖼️ Visual element classification (ResNet18 + ImageNet)
+- 📝 Complete text detection and recognition (EasyOCR)
+
 ## Features
 
 - **Book Detection**: Automatically finds and extracts book covers from images using OpenCV edge detection
